@@ -37,6 +37,8 @@ npm run dev
 
 这是一个基于 Vue3 + TypeScript + Element Plus 构建的现代化音乐播放器应用。
 
+> 💡 **说明**：本项目演示数据（歌曲、用户）均为本地 Mock 数据，无需后端服务即可完整体验。
+
 ### 技术栈
 
 - **Vue 3** - 渐进式 JavaScript 框架

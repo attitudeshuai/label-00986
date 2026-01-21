@@ -34,7 +34,8 @@ const isLoginPage = computed(() => route.path === '/login')
 
 .app-container {
   width: 100%;
-  height: 100vh;
+  /* 使用百分比高度，避免 100vh 在某些场景下产生 1px 误差导致底部出现空隙 */
+  height: 100%;
   display: flex;
   overflow: hidden;
 }
@@ -44,10 +45,13 @@ const isLoginPage = computed(() => route.path === '/login')
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  /* 为底部固定播放器预留空间，避免内容被遮挡 */
+  padding-bottom: 80px;
 }
 
 .main-content {
-  flex: 1;
+  flex: 1 1 auto;
+  min-height: 0;
   overflow-y: auto;
 }
 

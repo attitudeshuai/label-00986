@@ -1,115 +1,125 @@
 <template>
-  <div class="player-bar" v-if="playerStore.currentSong">
-    <!-- 歌曲信息 -->
-    <div class="song-info">
-      <el-image 
-        :src="playerStore.currentSong.cover" 
-        class="cover"
-        fit="cover"
-      >
-        <template #error>
-          <div class="cover-placeholder">
-            <el-icon :size="24"><Headset /></el-icon>
-          </div>
-        </template>
-      </el-image>
-      <div class="info">
-        <div class="title ellipsis">{{ playerStore.currentSong.title }}</div>
-        <div class="artist ellipsis">{{ playerStore.currentSong.artist }}</div>
-      </div>
-      <el-button 
-        :icon="playerStore.currentSong.isFavorite ? StarFilled : Star"
-        circle 
-        size="small"
-        :type="playerStore.currentSong.isFavorite ? 'warning' : 'default'"
-        @click="playerStore.toggleFavorite(playerStore.currentSong!.id)"
-      />
-    </div>
-
-    <!-- 播放控制 -->
-    <div class="controls">
-      <div class="control-buttons">
-        <el-tooltip :content="playModeText" placement="top">
-          <el-button :icon="playModeIcon" circle size="small" @click="playerStore.togglePlayMode" />
-        </el-tooltip>
-        <el-button :icon="ArrowLeftBold" circle @click="playerStore.playPrev" />
-        <el-button 
-          :icon="playerStore.isPlaying ? VideoPause : VideoPlay" 
-          circle 
-          size="large"
-          type="primary"
-          @click="playerStore.togglePlay"
-          :loading="isLoading"
-        />
-        <el-button :icon="ArrowRightBold" circle @click="playerStore.playNext" />
-        <el-button :icon="List" circle size="small" @click="showPlaylist = true" />
-      </div>
-      
-      <div class="progress-bar">
-        <span class="time">{{ formatTime(playerStore.currentTime) }}</span>
-        <el-slider 
-          v-model="progressValue"
-          :show-tooltip="false"
-          @input="handleProgressInput"
-          @change="handleProgressChange"
-          class="progress-slider"
-        />
-        <span class="time">{{ formatTime(playerStore.duration) }}</span>
-      </div>
-    </div>
-
-    <!-- 音量控制 -->
-    <div class="volume-control">
-      <el-button 
-        :icon="volumeIcon" 
-        circle 
-        size="small"
-        @click="playerStore.toggleMute"
-      />
-      <el-slider 
-        v-model="volumeValue"
-        :show-tooltip="false"
-        @input="handleVolumeChange"
-        class="volume-slider"
-      />
-    </div>
-
-    <!-- 隐藏的 audio 元素 -->
-    <audio 
-      ref="audioRef"
-      :src="playerStore.currentSong.url"
-      @timeupdate="handleTimeUpdate"
-      @loadedmetadata="handleLoadedMetadata"
-      @ended="playerStore.onSongEnd"
-      @canplay="handleCanPlay"
-      @waiting="isLoading = true"
-    />
-
-    <!-- 播放列表抽屉 -->
-    <el-drawer v-model="showPlaylist" title="播放列表" direction="rtl" size="360px">
-      <div class="playlist-drawer">
-        <div 
-          v-for="song in playerStore.playlist" 
-          :key="song.id"
-          class="playlist-item"
-          :class="{ active: song.id === playerStore.currentSong?.id }"
-          @click="playerStore.playSong(song)"
+  <div class="player-bar">
+    <template v-if="playerStore.currentSong">
+      <!-- 歌曲信息 -->
+      <div class="song-info">
+        <el-image 
+          :src="playerStore.currentSong.cover" 
+          class="cover"
+          fit="cover"
         >
-          <el-image :src="song.cover" class="item-cover" fit="cover">
-            <template #error>
-              <div class="cover-placeholder-sm">
-                <el-icon><Headset /></el-icon>
-              </div>
-            </template>
-          </el-image>
-          <div class="item-info">
-            <div class="item-title ellipsis">{{ song.title }}</div>
-            <div class="item-artist ellipsis">{{ song.artist }}</div>
-          </div>
-          <span class="item-duration">{{ formatTime(song.duration) }}</span>
+          <template #error>
+            <div class="cover-placeholder">
+              <el-icon :size="24"><Headset /></el-icon>
+            </div>
+          </template>
+        </el-image>
+        <div class="info">
+          <div class="title ellipsis">{{ playerStore.currentSong.title }}</div>
+          <div class="artist ellipsis">{{ playerStore.currentSong.artist }}</div>
+        </div>
+        <el-button 
+          :icon="playerStore.currentSong.isFavorite ? StarFilled : Star"
+          circle 
+          size="small"
+          :type="playerStore.currentSong.isFavorite ? 'warning' : 'default'"
+          @click="playerStore.toggleFavorite(playerStore.currentSong!.id)"
+        />
+      </div>
+
+      <!-- 播放控制 -->
+      <div class="controls">
+        <div class="control-buttons">
+          <el-tooltip :content="playModeText" placement="top">
+            <el-button :icon="playModeIcon" circle size="small" @click="playerStore.togglePlayMode" />
+          </el-tooltip>
+          <el-button :icon="ArrowLeftBold" circle @click="playerStore.playPrev" />
+          <el-button 
+            :icon="playerStore.isPlaying ? VideoPause : VideoPlay" 
+            circle 
+            size="large"
+            type="primary"
+            @click="playerStore.togglePlay"
+            :loading="isLoading"
+          />
+          <el-button :icon="ArrowRightBold" circle @click="playerStore.playNext" />
+          <el-button :icon="List" circle size="small" @click="showPlaylist = true" />
+        </div>
+        
+        <div class="progress-bar">
+          <span class="time">{{ formatTime(playerStore.currentTime) }}</span>
+          <el-slider 
+            v-model="progressValue"
+            :show-tooltip="false"
+            @input="handleProgressInput"
+            @change="handleProgressChange"
+            class="progress-slider"
+          />
+          <span class="time">{{ formatTime(playerStore.duration) }}</span>
         </div>
       </div>
-    </el-drawer>
+
+      <!-- 音量控制 -->
+      <div class="volume-control">
+        <el-button 
+          :icon="volumeIcon" 
+          circle 
+          size="small"
+          @click="playerStore.toggleMute"
+        />
+        <el-slider 
+          v-model="volumeValue"
+          :show-tooltip="false"
+          @input="handleVolumeChange"
+          class="volume-slider"
+        />
+      </div>
+
+      <!-- 隐藏的 audio 元素 -->
+      <audio 
+        ref="audioRef"
+        :src="playerStore.currentSong.url"
+        @timeupdate="handleTimeUpdate"
+        @loadedmetadata="handleLoadedMetadata"
+        @ended="playerStore.onSongEnd"
+        @canplay="handleCanPlay"
+        @waiting="isLoading = true"
+      />
+
+      <!-- 播放列表抽屉 -->
+      <el-drawer v-model="showPlaylist" title="播放列表" direction="rtl" size="360px">
+        <div class="playlist-drawer">
+          <div 
+            v-for="song in playerStore.playlist" 
+            :key="song.id"
+            class="playlist-item"
+            :class="{ active: song.id === playerStore.currentSong?.id }"
+            @click="playerStore.playSong(song)"
+          >
+            <el-image :src="song.cover" class="item-cover" fit="cover">
+              <template #error>
+                <div class="cover-placeholder-sm">
+                  <el-icon><Headset /></el-icon>
+                </div>
+              </template>
+            </el-image>
+            <div class="item-info">
+              <div class="item-title ellipsis">{{ song.title }}</div>
+              <div class="item-artist ellipsis">{{ song.artist }}</div>
+            </div>
+            <span class="item-duration">{{ formatTime(song.duration) }}</span>
+          </div>
+        </div>
+      </el-drawer>
+    </template>
+    
+    <!-- 无歌曲时的占位 -->
+    <template v-else>
+      <div class="empty-player">
+        <el-icon :size="20"><Headset /></el-icon>
+        <span>暂无播放歌曲</span>
+      </div>
+    </template>
   </div>
 </template>
 
@@ -227,6 +237,13 @@ watch(() => playerStore.currentSong, () => {
 .player-bar {
   height: 80px;
   min-height: 80px;
+  max-height: 80px;
+  // 固定在可视区域底部，彻底避免与窗口底部之间出现缝隙
+  position: fixed;
+  left: 220px; // 与侧边栏宽度保持一致
+  right: 0;
+  bottom: 0;
+  z-index: 100;
   background: $bg-player;
   display: flex;
   align-items: center;
@@ -234,6 +251,18 @@ watch(() => playerStore.currentSong, () => {
   padding: 0 $spacing-lg;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
   flex-shrink: 0;
+  box-sizing: border-box;
+}
+
+.empty-player {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-sm;
+  color: rgba(255, 255, 255, 0.4);
+  font-size: $font-size-sm;
+  overflow: hidden;
 }
 
 .song-info {
@@ -332,19 +361,29 @@ watch(() => playerStore.currentSong, () => {
     
     .progress-slider {
       flex: 1;
+      // 移除 Element Plus 默认的上下外边距，避免点击进度条时播放器底部出现额外空隙
+      margin: 0 !important;
       
       :deep(.el-slider__runway) {
         background: rgba(255, 255, 255, 0.2);
+        height: 4px;
+        margin: 0;
       }
       
       :deep(.el-slider__bar) {
         background: $primary-color;
+        height: 4px;
+      }
+      
+      :deep(.el-slider__button-wrapper) {
+        top: -15px;
       }
       
       :deep(.el-slider__button) {
         width: 12px;
         height: 12px;
         border-color: $primary-color;
+        background-color: #fff;
       }
     }
   }
@@ -368,6 +407,8 @@ watch(() => playerStore.currentSong, () => {
   
   .volume-slider {
     flex: 1;
+    // 同步去掉默认外边距，保持整体高度稳定
+    margin: 0 !important;
     
     :deep(.el-slider__runway) {
       background: rgba(255, 255, 255, 0.2);
