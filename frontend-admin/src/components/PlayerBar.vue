@@ -173,24 +173,27 @@ const volumeIcon = computed(() => {
   return Microphone
 })
 
-function handleProgressChange(value: number) {
+function handleProgressChange(value: number | number[]) {
+  const numValue = Array.isArray(value) ? value[0] : value
   if (audioRef.value && playerStore.duration > 0) {
-    const time = (value / 100) * playerStore.duration
+    const time = (numValue / 100) * playerStore.duration
     audioRef.value.currentTime = time
     playerStore.setCurrentTime(time)
   }
   isDragging.value = false
 }
 
-function handleProgressInput(value: number) {
+function handleProgressInput(value: number | number[]) {
+  const numValue = Array.isArray(value) ? value[0] : value
   isDragging.value = true
-  dragValue.value = value
+  dragValue.value = numValue
 }
 
-function handleVolumeChange(value: number) {
-  playerStore.setVolume(value)
+function handleVolumeChange(value: number | number[]) {
+  const numValue = Array.isArray(value) ? value[0] : value
+  playerStore.setVolume(numValue)
   if (audioRef.value) {
-    audioRef.value.volume = value / 100
+    audioRef.value.volume = numValue / 100
   }
 }
 

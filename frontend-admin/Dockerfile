@@ -17,7 +17,7 @@ COPY . ./
 RUN npm run build
 
 # 生产阶段 - 使用 nginx 作为静态服务器
-FROM --platform=$TARGETPLATFORM nginx:alpine
+FROM nginx:alpine
 
 # 复制构建产物
 COPY --from=builder /app/dist /usr/share/nginx/html

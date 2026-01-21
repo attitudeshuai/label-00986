@@ -11,6 +11,17 @@ export function formatTime(seconds: number): string {
 }
 
 /**
+ * 格式化时长（秒转 m:ss 或 mm:ss）
+ * @deprecated 使用 formatTime 代替
+ */
+export function formatDuration(seconds: number): string {
+  if (isNaN(seconds) || seconds < 0) return '0:00'
+  const mins = Math.floor(seconds / 60)
+  const secs = Math.floor(seconds % 60)
+  return `${mins}:${secs.toString().padStart(2, '0')}`
+}
+
+/**
  * 格式化日期
  */
 export function formatDate(date: string | Date): string {
