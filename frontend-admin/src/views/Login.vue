@@ -3,7 +3,7 @@
     <div class="login-container">
       <div class="login-card">
         <div class="login-header">
-          <el-icon :size="48" color="#409EFF"><Headset /></el-icon>
+          <el-icon :size="48" color="#409EFF" style="display: flex; align-items: center; justify-content: center; margin: 0 auto;"><Headset /></el-icon>
           <h1 class="title">Music Player</h1>
           <p class="subtitle">登录以享受更多功能</p>
         </div>
@@ -55,7 +55,7 @@
 
       <div class="login-bg">
         <div class="bg-content">
-          <el-icon :size="120" color="rgba(255,255,255,0.8)"><Headset /></el-icon>
+          <el-icon :size="120" color="rgba(255,255,255,0.8)" style="display: flex; align-items: center; justify-content: center; margin: 0 auto;"><Headset /></el-icon>
           <h2>发现音乐的美好</h2>
           <p>海量音乐，随心畅听</p>
         </div>

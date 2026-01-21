@@ -3,7 +3,7 @@
     <div class="content">
       <!-- 头部 -->
       <header class="header">
-        <h1 class="page-title">发现音乐</h1>
+        <h1 class="page-title">首页</h1>
         <SearchBar @search="handleSearch" />
       </header>
 
@@ -13,7 +13,7 @@
           <h2 class="section-title">推荐歌曲</h2>
           <el-button text type="primary" @click="$router.push('/playlist')">
             查看全部
-            <el-icon><ArrowRight /></el-icon>
+            <el-icon style="display: inline-flex; align-items: center; justify-content: center;"><ArrowRight /></el-icon>
           </el-button>
         </div>
         <div class="song-grid">
@@ -33,7 +33,7 @@
         <div class="ranking-cards">
           <div class="ranking-card">
             <div class="ranking-header">
-              <el-icon :size="24" color="#F56C6C"><TrendCharts /></el-icon>
+              <el-icon :size="24" color="#F56C6C" style="display: inline-flex; align-items: center; justify-content: center;"><TrendCharts /></el-icon>
               <span>飙升榜</span>
             </div>
             <div class="ranking-list">
@@ -45,8 +45,10 @@
               >
                 <span class="rank" :class="{ top: index < 3 }">{{ index + 1 }}</span>
                 <div class="song-info">
-                  <div class="title ellipsis">{{ song.title }}</div>
-                  <div class="artist ellipsis">{{ song.artist }}</div>
+                  <div class="title ellipsis">
+                    <span>{{ song.title }}</span>
+                    <span class="artist-inline"> - {{ song.artist }}</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -54,7 +56,7 @@
           
           <div class="ranking-card">
             <div class="ranking-header">
-              <el-icon :size="24" color="#E6A23C"><Star /></el-icon>
+              <el-icon :size="24" color="#E6A23C" style="display: inline-flex; align-items: center; justify-content: center;"><Star /></el-icon>
               <span>新歌榜</span>
             </div>
             <div class="ranking-list">
@@ -66,8 +68,10 @@
               >
                 <span class="rank" :class="{ top: index < 3 }">{{ index + 1 }}</span>
                 <div class="song-info">
-                  <div class="title ellipsis">{{ song.title }}</div>
-                  <div class="artist ellipsis">{{ song.artist }}</div>
+                  <div class="title ellipsis">
+                    <span>{{ song.title }}</span>
+                    <span class="artist-inline"> - {{ song.artist }}</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -75,7 +79,7 @@
           
           <div class="ranking-card">
             <div class="ranking-header">
-              <el-icon :size="24" color="#67C23A"><Headset /></el-icon>
+              <el-icon :size="24" color="#67C23A" style="display: inline-flex; align-items: center; justify-content: center;"><Headset /></el-icon>
               <span>原创榜</span>
             </div>
             <div class="ranking-list">
@@ -87,47 +91,12 @@
               >
                 <span class="rank" :class="{ top: index < 3 }">{{ index + 1 }}</span>
                 <div class="song-info">
-                  <div class="title ellipsis">{{ song.title }}</div>
-                  <div class="artist ellipsis">{{ song.artist }}</div>
+                  <div class="title ellipsis">
+                    <span>{{ song.title }}</span>
+                    <span class="artist-inline"> - {{ song.artist }}</span>
+                  </div>
                 </div>
               </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- 最近播放 -->
-      <section class="section" v-if="playerStore.currentSong">
-        <div class="section-header">
-          <h2 class="section-title">正在播放</h2>
-        </div>
-        <div class="now-playing-card">
-          <el-image :src="playerStore.currentSong.cover" class="cover" fit="cover">
-            <template #error>
-              <div class="cover-placeholder">
-                <el-icon :size="48"><Headset /></el-icon>
-              </div>
-            </template>
-          </el-image>
-          <div class="info">
-            <h3 class="title">{{ playerStore.currentSong.title }}</h3>
-            <p class="artist">{{ playerStore.currentSong.artist }}</p>
-            <p class="album">{{ playerStore.currentSong.album }}</p>
-            <div class="controls">
-              <el-button 
-                :icon="playerStore.isPlaying ? VideoPause : VideoPlay"
-                type="primary"
-                size="large"
-                circle
-                @click="playerStore.togglePlay"
-              />
-              <el-button
-                :icon="playerStore.currentSong.isFavorite ? StarFilled : Star"
-                :type="playerStore.currentSong.isFavorite ? 'warning' : 'default'"
-                size="large"
-                circle
-                @click="playerStore.toggleFavorite(playerStore.currentSong!.id)"
-              />
             </div>
           </div>
         </div>
@@ -138,7 +107,7 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { ArrowRight, TrendCharts, Star, StarFilled, Headset, VideoPlay, VideoPause } from '@element-plus/icons-vue'
+import { ArrowRight, TrendCharts, Star } from '@element-plus/icons-vue'
 import SearchBar from '@/components/SearchBar.vue'
 import SongCard from '@/components/SongCard.vue'
 import { usePlayerStore } from '@/stores/player'
@@ -162,6 +131,7 @@ function handleSearch(keyword: string) {
 </script>
 
 <style lang="scss" scoped>
+@use 'sass:color';
 @use '@/styles/variables.scss' as *;
 
 .home-page {
@@ -247,7 +217,7 @@ function handleSearch(keyword: string) {
   
   .ranking-item {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: $spacing-sm;
     padding: $spacing-sm;
     border-radius: $radius-base;
@@ -260,13 +230,14 @@ function handleSearch(keyword: string) {
     
     .rank {
       width: 24px;
-      height: 24px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      height: auto;
+      display: block;
       font-size: $font-size-sm;
       font-weight: 600;
       color: $text-secondary;
+      flex-shrink: 0;
+      line-height: 1.4;
+      text-align: left;
       
       &.top {
         color: $primary-color;
@@ -280,69 +251,17 @@ function handleSearch(keyword: string) {
       .title {
         font-size: $font-size-sm;
         color: $text-primary;
-      }
-      
-      .artist {
-        font-size: $font-size-xs;
-        color: $text-secondary;
+        line-height: 1.4;
+        margin: 0;
+        padding: 0;
+        
+        .artist-inline {
+          color: $text-secondary;
+          font-weight: normal;
+        }
       }
     }
   }
 }
 
-.now-playing-card {
-  display: flex;
-  gap: $spacing-lg;
-  background: $bg-card;
-  border-radius: $radius-large;
-  box-shadow: $shadow-base;
-  padding: $spacing-lg;
-  
-  .cover {
-    width: 160px;
-    height: 160px;
-    border-radius: $radius-base;
-    flex-shrink: 0;
-  }
-  
-  .cover-placeholder {
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: rgba(255, 255, 255, 0.8);
-  }
-  
-  .info {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    
-    .title {
-      font-size: $font-size-xl;
-      font-weight: 600;
-      color: $text-primary;
-      margin-bottom: $spacing-xs;
-    }
-    
-    .artist {
-      font-size: $font-size-base;
-      color: $text-secondary;
-      margin-bottom: $spacing-xs;
-    }
-    
-    .album {
-      font-size: $font-size-sm;
-      color: $text-placeholder;
-      margin-bottom: $spacing-md;
-    }
-    
-    .controls {
-      display: flex;
-      gap: $spacing-sm;
-    }
-  }
-}
 </style>

@@ -4,13 +4,18 @@
       <!-- 歌曲信息 -->
       <div class="song-info">
         <el-image 
-          :src="playerStore.currentSong.cover" 
+          :src="playerStore.currentSong.cover || 'invalid-url'" 
           class="cover"
           fit="cover"
         >
           <template #error>
-            <div class="cover-placeholder">
-              <el-icon :size="24"><Headset /></el-icon>
+            <div class="cover-placeholder" :style="{ background: `linear-gradient(135deg, ${currentSongColor} 0%, ${currentSongColor}dd 100%)` }">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="music-icon">
+                <path d="M9 18V5L21 3V16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="6" cy="18" r="3" stroke="currentColor" stroke-width="2"/>
+                <circle cx="18" cy="16" r="3" stroke="currentColor" stroke-width="2"/>
+              </svg>
+              <div class="song-title">{{ playerStore.currentSong.title }}</div>
             </div>
           </template>
         </el-image>
@@ -47,7 +52,7 @@
         </div>
         
         <div class="progress-bar">
-          <span class="time">{{ formatTime(playerStore.currentTime) }}</span>
+          <span class="time">{{ formatTime(displayTime) }}</span>
           <el-slider 
             v-model="progressValue"
             :show-tooltip="false"
@@ -96,10 +101,15 @@
             :class="{ active: song.id === playerStore.currentSong?.id }"
             @click="playerStore.playSong(song)"
           >
-            <el-image :src="song.cover" class="item-cover" fit="cover">
+            <el-image :src="song.cover || 'invalid-url'" class="item-cover" fit="cover">
               <template #error>
-                <div class="cover-placeholder-sm">
-                  <el-icon><Headset /></el-icon>
+                <div class="cover-placeholder-sm" :style="{ background: `linear-gradient(135deg, ${generateSongColor(song.title, song.artist)} 0%, ${generateSongColor(song.title, song.artist)}dd 100%)` }">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="music-icon">
+                    <path d="M9 18V5L21 3V16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <circle cx="6" cy="18" r="3" stroke="currentColor" stroke-width="2"/>
+                    <circle cx="18" cy="16" r="3" stroke="currentColor" stroke-width="2"/>
+                  </svg>
+                  <div class="song-title">{{ song.title }}</div>
                 </div>
               </template>
             </el-image>
@@ -127,11 +137,11 @@
 import { ref, computed, watch, shallowRef } from 'vue'
 import { 
   VideoPlay, VideoPause, ArrowLeftBold, ArrowRightBold,
-  Star, StarFilled, List, Headset,
+  Star, StarFilled, List,
   Mute, Microphone, RefreshRight, DCaret, Sort
 } from '@element-plus/icons-vue'
 import { usePlayerStore } from '@/stores/player'
-import { formatTime } from '@/utils/format'
+import { formatTime, generateSongColor } from '@/utils/format'
 
 const playerStore = usePlayerStore()
 const audioRef = shallowRef<HTMLAudioElement | null>(null)
@@ -139,6 +149,7 @@ const showPlaylist = ref(false)
 const isLoading = ref(false)
 const isDragging = ref(false)
 const dragValue = ref(0)
+const draggingTime = ref(0)
 
 const progressValue = computed({
   get: () => isDragging.value ? dragValue.value : playerStore.progress,
@@ -173,6 +184,17 @@ const volumeIcon = computed(() => {
   return Microphone
 })
 
+// 显示的时间：拖动时显示拖动位置的时间，否则显示实际播放时间
+const displayTime = computed(() => {
+  return isDragging.value ? draggingTime.value : playerStore.currentTime
+})
+
+// 当前歌曲的封面颜色
+const currentSongColor = computed(() => {
+  if (!playerStore.currentSong) return ''
+  return generateSongColor(playerStore.currentSong.title, playerStore.currentSong.artist)
+})
+
 function handleProgressChange(value: number | number[]) {
   const numValue = Array.isArray(value) ? value[0] : value
   if (audioRef.value && playerStore.duration > 0) {
@@ -187,6 +209,10 @@ function handleProgressInput(value: number | number[]) {
   const numValue = Array.isArray(value) ? value[0] : value
   isDragging.value = true
   dragValue.value = numValue
+  // 计算拖动位置对应的时间
+  if (playerStore.duration > 0) {
+    draggingTime.value = (numValue / 100) * playerStore.duration
+  }
 }
 
 function handleVolumeChange(value: number | number[]) {
@@ -235,6 +261,7 @@ watch(() => playerStore.currentSong, () => {
 </script>
 
 <style lang="scss" scoped>
+@use 'sass:color';
 @use '@/styles/variables.scss' as *;
 
 .player-bar {
@@ -266,6 +293,12 @@ watch(() => playerStore.currentSong, () => {
   color: rgba(255, 255, 255, 0.4);
   font-size: $font-size-sm;
   overflow: hidden;
+  
+  .el-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 }
 
 .song-info {
@@ -284,11 +317,31 @@ watch(() => playerStore.currentSong, () => {
   .cover-placeholder {
     width: 100%;
     height: 100%;
-    background: rgba(255, 255, 255, 0.1);
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    color: rgba(255, 255, 255, 0.5);
+    color: rgba(255, 255, 255, 0.95);
+    padding: $spacing-xs;
+    
+    .music-icon {
+      margin-bottom: 2px;
+      flex-shrink: 0;
+    }
+    
+    .song-title {
+      font-size: 10px;
+      font-weight: 500;
+      text-align: center;
+      line-height: 1.2;
+      word-break: break-word;
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+    }
   }
   
   .info {
@@ -326,9 +379,18 @@ watch(() => playerStore.currentSong, () => {
       background: rgba(255, 255, 255, 0.1);
       border: none;
       color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       
       &:hover {
         background: rgba(255, 255, 255, 0.2);
+      }
+      
+      .el-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
       }
       
       &.el-button--primary {
@@ -402,9 +464,18 @@ watch(() => playerStore.currentSong, () => {
     background: rgba(255, 255, 255, 0.1);
     border: none;
     color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     
     &:hover {
       background: rgba(255, 255, 255, 0.2);
+    }
+    
+    .el-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
   }
   
@@ -461,11 +532,31 @@ watch(() => playerStore.currentSong, () => {
     .cover-placeholder-sm {
       width: 100%;
       height: 100%;
-      background: $bg-hover;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
-      color: $text-secondary;
+      color: rgba(255, 255, 255, 0.95);
+      padding: 2px;
+      
+      .music-icon {
+        margin-bottom: 2px;
+        flex-shrink: 0;
+      }
+      
+      .song-title {
+        font-size: 8px;
+        font-weight: 500;
+        text-align: center;
+        line-height: 1.1;
+        word-break: break-word;
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+      }
     }
     
     .item-info {

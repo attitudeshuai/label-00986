@@ -9,10 +9,10 @@
         <div class="header-right">
           <el-radio-group v-model="viewMode" size="default">
             <el-radio-button value="grid">
-              <el-icon><Grid /></el-icon>
+              <el-icon style="display: inline-flex; align-items: center; justify-content: center;"><Grid /></el-icon>
             </el-radio-button>
             <el-radio-button value="list">
-              <el-icon><List /></el-icon>
+              <el-icon style="display: inline-flex; align-items: center; justify-content: center;"><List /></el-icon>
             </el-radio-button>
           </el-radio-group>
           <SearchBar @search="handleSearch" />
@@ -151,6 +151,18 @@ function shufflePlay() {
   background: $bg-card;
   border-radius: $radius-base;
   box-shadow: $shadow-light;
+  
+  :deep(.el-button) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    .el-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
 }
 
 .song-grid {

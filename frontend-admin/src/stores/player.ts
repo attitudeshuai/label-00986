@@ -3,7 +3,7 @@ import { ref, computed } from 'vue'
 import type { Song, PlayMode } from '@/types/music'
 import { getStorage, setStorage } from '@/utils/storage'
 
-// 模拟音乐数据
+// 模拟音乐数据 - 使用周杰伦专辑封面
 const mockSongs: Song[] = [
   {
     id: 1,
@@ -11,7 +11,8 @@ const mockSongs: Song[] = [
     artist: '周杰伦',
     album: '十一月的萧邦',
     duration: 269,
-    cover: 'https://picsum.photos/seed/song1/300/300',
+    // 十一月的萧邦 专辑封面
+    cover: 'https://y.qq.com/music/photo_new/T002R300x300M000000MkMni19ClKG.jpg',
     url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
     isFavorite: true
   },
@@ -21,7 +22,8 @@ const mockSongs: Song[] = [
     artist: '周杰伦',
     album: '叶惠美',
     duration: 269,
-    cover: 'https://picsum.photos/seed/song2/300/300',
+    // 叶惠美 专辑封面 - 使用十一月的萧邦另一版本（周杰伦本人）
+    cover: 'https://y.qq.com/music/photo_new/T002R300x300M0000024bjiL2aocxT.jpg',
     url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3',
     isFavorite: false
   },
@@ -31,7 +33,8 @@ const mockSongs: Song[] = [
     artist: '周杰伦',
     album: '魔杰座',
     duration: 223,
-    cover: 'https://picsum.photos/seed/song3/300/300',
+    // 魔杰座 专辑封面（周杰伦本人）
+    cover: 'https://y.qq.com/music/photo_new/T002R300x300M000002Neh8l0uciQZ.jpg',
     url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3',
     isFavorite: true
   },
@@ -41,7 +44,8 @@ const mockSongs: Song[] = [
     artist: '周杰伦',
     album: '七里香',
     duration: 299,
-    cover: 'https://picsum.photos/seed/song4/300/300',
+    // 七里香 专辑封面（周杰伦本人）
+    cover: 'https://y.qq.com/music/photo_new/T002R300x300M000003DFRzD192KKD.jpg',
     url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3',
     isFavorite: false
   },
@@ -51,7 +55,8 @@ const mockSongs: Song[] = [
     artist: '周杰伦',
     album: '我很忙',
     duration: 239,
-    cover: 'https://picsum.photos/seed/song5/300/300',
+    // 我很忙 专辑封面
+    cover: 'https://picsum.photos/seed/qinghuaci/300/300',
     url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3',
     isFavorite: false
   },
@@ -61,7 +66,8 @@ const mockSongs: Song[] = [
     artist: '周杰伦',
     album: '周杰伦的床边故事',
     duration: 215,
-    cover: 'https://picsum.photos/seed/song6/300/300',
+    // 床边故事 专辑封面（周杰伦本人）
+    cover: 'https://y.qq.com/music/photo_new/T002R300x300M000003RMaRI1iFoYd.jpg',
     url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3',
     isFavorite: true
   }

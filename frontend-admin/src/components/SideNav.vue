@@ -13,7 +13,7 @@
     >
       <el-menu-item index="/">
         <el-icon><HomeFilled /></el-icon>
-        <span>发现音乐</span>
+        <span>首页</span>
       </el-menu-item>
       <el-menu-item index="/playlist">
         <el-icon><List /></el-icon>
@@ -117,6 +117,14 @@ function handleCommand(command: string) {
       background: rgba(64, 158, 255, 0.1);
       color: $primary-color;
     }
+    
+    .el-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 1em;
+      height: 1em;
+    }
   }
 }
 
@@ -145,6 +153,22 @@ function handleCommand(command: string) {
   
   .el-button {
     width: 100%;
+    
+    .el-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+}
+
+:deep(.el-dropdown-menu__item) {
+  .el-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: $spacing-xs;
+    vertical-align: middle;
   }
 }
 </style>

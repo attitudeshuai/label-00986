@@ -5,7 +5,7 @@
       <div class="login-prompt" v-if="!userStore.isLoggedIn">
         <el-empty description="请先登录后查看收藏">
           <template #image>
-            <el-icon :size="80" color="#909399"><User /></el-icon>
+            <el-icon :size="80" color="#909399" style="display: flex; align-items: center; justify-content: center;"><User /></el-icon>
           </template>
           <el-button type="primary" @click="$router.push('/login')">
             去登录
@@ -18,7 +18,7 @@
         <header class="header">
           <div class="header-info">
             <div class="icon-wrapper">
-              <el-icon :size="48" color="#E6A23C"><Star /></el-icon>
+              <el-icon :size="48" color="#E6A23C" style="display: flex; align-items: center; justify-content: center;"><Star /></el-icon>
             </div>
             <div class="info">
               <h1 class="page-title">我的收藏</h1>
@@ -39,15 +39,15 @@
 
         <!-- 收藏列表 -->
         <div class="favorites-content" v-if="playerStore.favoriteSongs.length > 0">
-          <SongList :songs="playerStore.favoriteSongs" />
+          <SongList :songs="playerStore.favoriteSongs" :show-playing-icon="false" />
         </div>
 
         <!-- 空状态 -->
         <div class="empty-state" v-else>
           <el-empty description="还没有收藏的歌曲">
-            <template #image>
-              <el-icon :size="80" color="#C0C4CC"><Star /></el-icon>
-            </template>
+          <template #image>
+            <el-icon :size="80" color="#C0C4CC" style="display: flex; align-items: center; justify-content: center;"><Star /></el-icon>
+          </template>
             <el-button type="primary" @click="$router.push('/playlist')">
               去发现音乐
             </el-button>

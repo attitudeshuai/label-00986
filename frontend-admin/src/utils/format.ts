@@ -42,3 +42,23 @@ export function getPlaceholderImage(width: number, height: number, text?: string
   const displayText = text || `${width}x${height}`
   return `https://via.placeholder.com/${width}x${height}/${bgColor}/${textColor}?text=${encodeURIComponent(displayText)}`
 }
+
+/**
+ * 根据歌曲名和歌手生成唯一的颜色
+ * 相同歌曲名和歌手总是生成相同的颜色
+ */
+export function generateSongColor(title: string, artist: string = ''): string {
+  const seed = `${title}-${artist}`
+  let hash = 0
+  for (let i = 0; i < seed.length; i++) {
+    const char = seed.charCodeAt(i)
+    hash = ((hash << 5) - hash) + char
+    hash = hash & hash // 转换为32位整数
+  }
+  
+  // 使用哈希值生成颜色（确保相同歌曲总是相同颜色）
+  // 生成一个在色相环上的颜色（0-360度）
+  const hue = Math.abs(hash) % 360
+  // 使用固定的饱和度和亮度，确保颜色鲜艳且可读
+  return `hsl(${hue}, 65%, 55%)`
+}

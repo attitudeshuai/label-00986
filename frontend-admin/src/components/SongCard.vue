@@ -5,10 +5,15 @@
     @click="handlePlay"
   >
     <div class="cover-wrapper">
-      <el-image :src="song.cover" class="cover" fit="cover">
+      <el-image :src="song.cover || 'invalid-url'" class="cover" fit="cover">
         <template #error>
-          <div class="cover-placeholder">
-            <el-icon :size="32"><Headset /></el-icon>
+          <div class="cover-placeholder" :style="{ background: `linear-gradient(135deg, ${coverColor} 0%, ${coverColor}dd 100%)` }">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="music-icon">
+              <path d="M9 18V5L21 3V16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle cx="6" cy="18" r="3" stroke="currentColor" stroke-width="2"/>
+              <circle cx="18" cy="16" r="3" stroke="currentColor" stroke-width="2"/>
+            </svg>
+            <div class="song-title">{{ song.title }}</div>
           </div>
         </template>
       </el-image>
@@ -39,10 +44,10 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import { VideoPlay, VideoPause, Star, StarFilled, Headset } from '@element-plus/icons-vue'
+import { VideoPlay, VideoPause, Star, StarFilled } from '@element-plus/icons-vue'
 import type { Song } from '@/types/music'
 import { usePlayerStore } from '@/stores/player'
-import { formatTime } from '@/utils/format'
+import { formatTime, generateSongColor } from '@/utils/format'
 
 const props = defineProps<{
   song: Song
@@ -53,6 +58,8 @@ const playerStore = usePlayerStore()
 const isPlaying = computed(() => 
   playerStore.currentSong?.id === props.song.id && playerStore.isPlaying
 )
+
+const coverColor = computed(() => generateSongColor(props.song.title, props.song.artist))
 
 function handlePlay() {
   if (playerStore.currentSong?.id === props.song.id) {
@@ -68,6 +75,7 @@ function handleFavorite() {
 </script>
 
 <style lang="scss" scoped>
+@use 'sass:color';
 @use '@/styles/variables.scss' as *;
 
 .song-card {
@@ -115,11 +123,31 @@ function handleFavorite() {
   .cover-placeholder {
     width: 100%;
     height: 100%;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    color: rgba(255, 255, 255, 0.8);
+    color: rgba(255, 255, 255, 0.95);
+    padding: $spacing-sm;
+    
+    .music-icon {
+      margin-bottom: $spacing-xs;
+      flex-shrink: 0;
+    }
+    
+    .song-title {
+      font-size: $font-size-xs;
+      font-weight: 500;
+      text-align: center;
+      line-height: 1.2;
+      word-break: break-word;
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+    }
   }
   
   .play-overlay {
@@ -135,6 +163,9 @@ function handleFavorite() {
     .play-icon {
       color: #fff;
       filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
   }
   
@@ -144,6 +175,15 @@ function handleFavorite() {
     right: $spacing-sm;
     opacity: 0;
     transition: $transition-fast;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    :deep(.el-icon) {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
   }
   
   &:hover .favorite-btn {
