@@ -88,7 +88,7 @@ export const usePlayerStore = defineStore('player', () => {
   // 计算属性
   const progress = computed(() => {
     if (duration.value === 0) return 0
-    return ((duration.value - currentTime.value) / duration.value) * 100
+    return (currentTime.value / duration.value) * 100
   })
 
   const favoriteSongs = computed(() => playlist.value.filter(s => s.isFavorite))
